@@ -87,7 +87,7 @@ align 16						; Ensure 16-byte alignment for performance
 	; Zero found in fourth chunk [rsi + 12]
 	add		rax, 12				; Add 12 for the first three complete chunks
 	lea		r8, [rsi + 12]		; Point to start of fourth chunk
-	jmp		.byte_check
+	jmp		.byte_check			; unnecesarry but pure aesthetics :)
 
 .byte_check:
 	cmp		byte [r8], 0		; check if byte is zero
