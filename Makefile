@@ -4,12 +4,11 @@ CFLAGS = -Wall -Wextra -Werror -O0
 
 # Assembler and flags
 NASM = nasm
-NASMFLAGS = -f elf64 -O3
-
+NASMFLAGS = -f elf64
 # Files
 NAME = tester
 SRC_C = main.c
-SRC_ASM = ft_strlen.s
+SRC_ASM = ft_strlen.s ft_strcpy.s ft_strcmp.s
 OBJ_C = $(SRC_C:.c=.o)
 OBJ_ASM = $(SRC_ASM:.s=.o)
 OBJ = $(OBJ_C) $(OBJ_ASM)
