@@ -5,8 +5,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <fcntl.h>
-#include <unistd.h>
 
 #define ITERATIONS 10000000
 
@@ -398,8 +396,8 @@ void test_read_functionality() {
     print_section("READ FUNCTIONALITY TEST");
     
     // Create a test file with some content
-    const char test_filename[] = "/tmp/libasm_test_file.txt";
-    const char test_content[] = "Hello from ft_read! This is a test message. 🚀\n";
+    const char test_filename[] __attribute__((aligned(16))) = "/tmp/libasm_test_file.txt";
+    const char test_content[] __attribute__((aligned(16))) = "Hello from ft_read! This is a test message. 🚀\n";
     size_t content_len = strlen(test_content);
     
     printf(BOLD "Test file: " RESET "\"" GREEN "%s" RESET "\"\n", test_filename);
@@ -523,11 +521,11 @@ void test_read_functionality() {
     
     // Test reading from empty file
     printf("\n" BOLD "📄 EMPTY FILE TEST:" RESET "\n");
-    const char empty_filename[] = "/tmp/libasm_empty_test.txt";
+    const char empty_filename[] __attribute__((aligned(16))) = "/tmp/libasm_empty_test.txt";
     int empty_fd = open(empty_filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
     close(empty_fd);
     
-    char empty_buffer[256];
+    char empty_buffer[256] __attribute__((aligned(16)));
     int empty_read_fd = open(empty_filename, O_RDONLY);
     ssize_t empty_result = ft_read(empty_read_fd, empty_buffer, sizeof(empty_buffer));
     close(empty_read_fd);
@@ -578,17 +576,20 @@ void test_read_functionality() {
 void test_strdup_functionality() {
     print_section("STRDUP FUNCTIONALITY TEST");
     
-    // Test cases for strdup
+    // Test cases for strdup - individual aligned strings
+    const char test_str1[] __attribute__((aligned(16))) = "Hello, World!";
+    const char test_str2[] __attribute__((aligned(16))) = "This is a longer string to test strdup functionality";
+    const char test_str3[] __attribute__((aligned(16))) = "Short";
+    const char test_str4[] __attribute__((aligned(16))) = "1234567890";
+    const char test_str5[] __attribute__((aligned(16))) = "Special chars: !@#$%^&*()_+-=[]{}|;':\",./<>?";
+    const char test_str6[] __attribute__((aligned(16))) = "Unicode test: 🚀🌍✨💻🎉";
+    const char test_str7[] __attribute__((aligned(16))) = ""; // Empty string
+    const char test_str8[] __attribute__((aligned(16))) = "A"; // Single character
+    const char test_str9[] __attribute__((aligned(16))) = "Spaces and\ttabs\nand\rnewlines"; // Whitespace characters
+    
     const char *test_cases[] = {
-        "Hello, World!",
-        "This is a longer string to test strdup functionality",
-        "Short",
-        "1234567890",
-        "Special chars: !@#$%^&*()_+-=[]{}|;':\",./<>?",
-        "Unicode test: 🚀🌍✨💻🎉",
-        "", // Empty string
-        "A", // Single character
-        "Spaces and\ttabs\nand\rnewlines" // Whitespace characters
+        test_str1, test_str2, test_str3, test_str4, test_str5,
+        test_str6, test_str7, test_str8, test_str9
     };
     
     int num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
@@ -670,8 +671,8 @@ void test_strdup_functionality() {
     printf(BOLD "🧠 MEMORY MANAGEMENT TEST:" RESET "\n");
     printf("Testing multiple allocations and deallocations...\n");
     
-    const char *test_str = "Memory test string";
-    char *ptrs[1000];
+    const char test_str[] __attribute__((aligned(16))) = "Memory test string";
+    char *ptrs[1000] __attribute__((aligned(16)));
     
     // Allocate many strings
     for (int i = 0; i < 1000; i++) {
@@ -703,7 +704,7 @@ void test_strdup_functionality() {
     const int STRDUP_ITERATIONS = 100000;  // 100K iterations for strdup
     printf("Testing with " MAGENTA "%d" RESET " iterations...\n\n", STRDUP_ITERATIONS);
     
-    const char *perf_test_str = "This is a performance test string for strdup";
+    const char perf_test_str[] __attribute__((aligned(16))) = "This is a performance test string for strdup";
     clock_t start, end;
     
     // Test ft_strdup performance
@@ -733,11 +734,13 @@ void test_strdup_functionality() {
     
     // Test with different string lengths
     printf("\n" BOLD "📏 LENGTH PERFORMANCE TEST:" RESET "\n");
-    const char *length_tests[] = {
-        "Short",
-        "This is a medium length string for testing",
-        "This is a very long string that we use to test the performance of strdup with longer strings to see how it scales with string length"
-    };
+    
+    // Individual aligned strings - compiler deduces optimal sizes
+    const char short_str[] __attribute__((aligned(16))) = "Short";
+    const char medium_str[] __attribute__((aligned(16))) = "This is a medium length string for testing";
+    const char long_str[] __attribute__((aligned(16))) = "This is a very long string that we use to test the performance of strdup with longer strings to see how it scales with string length";
+    
+    const char *length_tests[] __attribute__((aligned(16))) = {short_str, medium_str, long_str};
     
     for (int i = 0; i < 3; i++) {
         const char *test_str = length_tests[i];
